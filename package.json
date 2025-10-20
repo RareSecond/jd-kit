@@ -1,10 +1,30 @@
 {
   "name": "@jdansercoer/jd-kit",
   "version": "1.0.0",
-  "description": "Development toolkit for standardizing project setup",
+  "description": "Development toolkit for standardizing project setup across multiple projects. Provides shareable configs, Claude command templates, and reusable scripts.",
+  "keywords": [
+    "toolkit",
+    "cli",
+    "eslint",
+    "prettier",
+    "typescript",
+    "config",
+    "shareable-config",
+    "development",
+    "claude-ai",
+    "monorepo"
+  ],
   "author": "Jasper Dansercoer",
   "license": "MIT",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jdansercoer/jd-kit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jdansercoer/jd-kit/issues"
+  },
+  "homepage": "https://github.com/jdansercoer/jd-kit#readme",
   "bin": {
     "jd-kit": "./dist/cli/index.js"
   },

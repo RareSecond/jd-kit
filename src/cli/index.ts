@@ -3,6 +3,11 @@ import { Command } from 'commander'
 import { syncCommand } from './commands/sync.js'
 import { runCommand } from './commands/run.js'
 import { listCommand } from './commands/list.js'
+import { initCommand } from './commands/init.js'
+import { checkForUpdates } from './utils/update-notifier.js'
+
+// Check for updates in the background (non-blocking)
+checkForUpdates().catch(() => {})
 
 const program = new Command()
 
@@ -10,6 +15,12 @@ program
   .name('jd-kit')
   .description('Development toolkit CLI')
   .version('1.0.0')
+
+program
+  .command('init')
+  .description('Initialize JD-Kit in your project')
+  .option('-y, --yes', 'Skip prompts and use defaults')
+  .action(initCommand)
 
 program
   .command('sync')

@@ -17,9 +17,22 @@ npm install --save-dev @jdansercoer/jd-kit
 
 ## Quick Start
 
-### Sync Claude Commands
+### Initialize in Your Project
 
-Sync Claude command templates to your project with custom variables:
+The easiest way to get started:
+
+```bash
+npx jd-kit init
+```
+
+This interactive command will:
+- Ask what you want to set up (Claude commands, configs, or both)
+- Sync selected resources to your project
+- Show helpful next steps
+
+### Or Sync Resources Individually
+
+**Sync Claude Commands:**
 
 ```bash
 npx jd-kit sync --claude
@@ -30,6 +43,18 @@ This will:
 2. Copy templates from the toolkit to `.claude/commands/`
 3. Replace template variables (e.g., `{{BACKEND_PATH}}`) with your values
 4. Create a `.claude/.toolkit-meta.json` file to track synced files
+
+**Sync Configuration Files:**
+
+```bash
+npx jd-kit sync --configs
+```
+
+**List Available Resources:**
+
+```bash
+npx jd-kit list
+```
 
 ### Update Synced Commands
 
@@ -366,11 +391,13 @@ jd-kit/
 - ✅ `jd-kit run <script>` command
 - ✅ `jd-kit list` command
 
-### Phase 4: Polish (Next)
-- [ ] `jd-kit init` for new projects
-- [ ] Update notifications
-- [ ] Example projects
-- [ ] Publish to npm
+### Phase 4: Polish ✅
+- ✅ `jd-kit init` for new projects
+- ✅ Update notifications
+- ✅ .npmignore and package.json metadata
+- ✅ CHANGELOG.md
+- [ ] Example projects (future)
+- [ ] Publish to npm (ready when you are!)
 
 ## Contributing
 

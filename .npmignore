@@ -1,0 +1,36 @@
+# Source files (we ship dist instead)
+src/
+
+# Development files
+tsconfig.json
+tsconfig.*.json
+.gitignore
+
+# Documentation
+TOOLKIT_IMPLEMENTATION.md
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Tests
+test/
+*.test.ts
+*.spec.ts
+
+# CI/CD
+.github/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temp files
+*.tmp
+*.bak
