@@ -1,4 +1,5 @@
 import fs from 'fs-extra'
+import path from 'path'
 
 export class TemplateEngine {
   constructor(private variables: Record<string, string>) {}
@@ -13,7 +14,7 @@ export class TemplateEngine {
   async renderFile(templatePath: string, outputPath: string): Promise<void> {
     const template = await fs.readFile(templatePath, 'utf-8')
     const rendered = this.render(template)
-    await fs.ensureDir(require('path').dirname(outputPath))
+    await fs.ensureDir(path.dirname(outputPath))
     await fs.writeFile(outputPath, rendered, 'utf-8')
   }
 }
