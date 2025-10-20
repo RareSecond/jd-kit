@@ -7,14 +7,24 @@
       "example": "."
     },
     "BACKEND_PATH": {
-      "description": "Path to backend application",
+      "description": "Path to backend application (workspace name)",
       "default": "backend",
       "example": "apps/api"
     },
     "FRONTEND_PATH": {
-      "description": "Path to frontend application",
+      "description": "Path to frontend application (workspace name)",
       "default": "frontend",
       "example": "apps/web"
+    },
+    "BACKEND_URL": {
+      "description": "Development URL for backend API",
+      "default": "http://localhost:3000/api",
+      "example": "http://localhost:4000"
+    },
+    "FRONTEND_URL": {
+      "description": "Development URL for frontend application",
+      "default": "http://localhost:5173",
+      "example": "http://localhost:3000"
     },
     "SCRIPTS_PATH": {
       "description": "Path to shared scripts",

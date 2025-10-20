@@ -29,14 +29,26 @@ async function promptForVariables(): Promise<Record<string, string>> {
     {
       type: 'input',
       name: 'BACKEND_PATH',
-      message: 'Backend path:',
+      message: 'Backend path (workspace name):',
       default: 'backend'
     },
     {
       type: 'input',
       name: 'FRONTEND_PATH',
-      message: 'Frontend path:',
+      message: 'Frontend path (workspace name):',
       default: 'frontend'
+    },
+    {
+      type: 'input',
+      name: 'BACKEND_URL',
+      message: 'Backend development URL:',
+      default: 'http://localhost:3000/api'
+    },
+    {
+      type: 'input',
+      name: 'FRONTEND_URL',
+      message: 'Frontend development URL:',
+      default: 'http://localhost:5173'
     },
     {
       type: 'input',
