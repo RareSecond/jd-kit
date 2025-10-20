@@ -1,0 +1,26 @@
+{
+  "description": "Template variables for Claude commands",
+  "variables": {
+    "MONOREPO_ROOT": {
+      "description": "Root path of the monorepo",
+      "default": ".",
+      "example": "."
+    },
+    "BACKEND_PATH": {
+      "description": "Path to backend application",
+      "default": "backend",
+      "example": "apps/api"
+    },
+    "FRONTEND_PATH": {
+      "description": "Path to frontend application",
+      "default": "frontend",
+      "example": "apps/web"
+    },
+    "SCRIPTS_PATH": {
+      "description": "Path to shared scripts",
+      "default": ".claude/lib",
+      "example": "scripts"
+    }
+  },
+  "usage": "Variables are substituted in templates using {{VARIABLE_NAME}} syntax"
+}

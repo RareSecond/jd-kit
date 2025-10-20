@@ -1,0 +1,41 @@
+{
+  "name": "@jdansercoer/jd-kit",
+  "version": "1.0.0",
+  "description": "Development toolkit for standardizing project setup",
+  "author": "Jasper Dansercoer",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "jd-kit": "./dist/cli/index.js"
+  },
+  "exports": {
+    ".": "./dist/cli/index.js",
+    "./configs/eslint": "./dist/configs/eslint.config.js",
+    "./configs/prettier": "./dist/configs/prettier.config.js",
+    "./configs/tsconfig.base.json": "./src/configs/tsconfig.base.json",
+    "./configs/playwright": "./dist/configs/playwright.config.js"
+  },
+  "files": [
+    "dist",
+    "templates",
+    "src/configs"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "prepublishOnly": "npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "chalk": "^5.6.2",
+    "commander": "^14.0.1",
+    "fs-extra": "^11.3.2",
+    "inquirer": "^12.10.0"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/inquirer": "^9.0.9",
+    "@types/node": "^24.8.1",
+    "typescript": "^5.9.3"
+  }
+}
