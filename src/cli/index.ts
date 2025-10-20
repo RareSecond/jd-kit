@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 import { Command } from 'commander'
 import { syncCommand } from './commands/sync.js'
+import { runCommand } from './commands/run.js'
+import { listCommand } from './commands/list.js'
 
 const program = new Command()
 
@@ -16,5 +18,18 @@ program
   .option('--configs', 'Sync configuration files')
   .option('--update', 'Update existing synced files')
   .action(syncCommand)
+
+program
+  .command('run <script>')
+  .description('Run a toolkit script')
+  .action(runCommand)
+
+program
+  .command('list')
+  .description('List available toolkit resources')
+  .option('--scripts', 'List only scripts')
+  .option('--configs', 'List only configurations')
+  .option('--commands', 'List only Claude commands')
+  .action(listCommand)
 
 program.parse()

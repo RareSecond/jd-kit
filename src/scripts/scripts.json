@@ -1,0 +1,24 @@
+{
+  "scripts": [
+    {
+      "name": "cq-fix",
+      "description": "Run code quality checks with auto-fixing (typecheck, lint, prettier)",
+      "file": "cq-fix.ts",
+      "category": "quality"
+    }
+  ],
+  "categories": {
+    "quality": {
+      "name": "Code Quality",
+      "description": "Scripts for maintaining code quality"
+    },
+    "setup": {
+      "name": "Setup & Configuration",
+      "description": "Scripts for project setup and configuration"
+    },
+    "git": {
+      "name": "Git Workflows",
+      "description": "Scripts for git operations and workflows"
+    }
+  }
+}

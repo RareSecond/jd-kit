@@ -52,7 +52,7 @@ Sync toolkit resources to your project.
 
 **Options:**
 - `--claude` - Sync Claude command templates
-- `--configs` - Sync configuration files (coming in Phase 2)
+- `--configs` - Sync configuration files
 - `--update` - Update existing synced files
 
 **Examples:**
@@ -65,6 +65,37 @@ npx jd-kit sync --claude --update
 
 # Sync both commands and configs
 npx jd-kit sync --claude --configs
+```
+
+### `jd-kit run <script>`
+
+Run a toolkit script in your project.
+
+**Examples:**
+```bash
+# Run code quality fix
+npx jd-kit run cq-fix
+```
+
+### `jd-kit list`
+
+List all available toolkit resources (scripts, configs, commands).
+
+**Options:**
+- `--scripts` - List only scripts
+- `--configs` - List only configurations
+- `--commands` - List only Claude commands
+
+**Examples:**
+```bash
+# List everything
+npx jd-kit list
+
+# List only scripts
+npx jd-kit list --scripts
+
+# List only configs
+npx jd-kit list --configs
 ```
 
 ## Claude Command Templates
@@ -121,6 +152,36 @@ This allows the toolkit to:
 - Track which files came from the toolkit
 - Detect local modifications
 - Preserve your variable configuration
+
+## Reusable Scripts
+
+The toolkit provides reusable development scripts that you can run directly.
+
+### Running Scripts
+
+```bash
+npx jd-kit run <script-name>
+```
+
+### Available Scripts
+
+- **cq-fix** - Run code quality checks with auto-fixing (typecheck, lint, prettier)
+
+Run `jd-kit list --scripts` to see all available scripts with descriptions.
+
+### How Scripts Work
+
+Scripts are TypeScript files that run in your project context. They use your project's npm scripts (like `npm run typecheck`, `npm run lint`, `npm run prettier:fix`) so they work with your existing setup.
+
+**Example: Running code quality fix**
+```bash
+npx jd-kit run cq-fix
+```
+
+This will run three checks concurrently:
+- TypeScript type checking
+- ESLint with auto-fix
+- Prettier formatting
 
 ## Shareable Configs
 
@@ -260,7 +321,9 @@ jd-kit/
 │   ├── cli/
 │   │   ├── index.ts              # CLI entry point
 │   │   ├── commands/
-│   │   │   └── sync.ts           # Sync command
+│   │   │   ├── sync.ts           # Sync command
+│   │   │   ├── run.ts            # Run script command
+│   │   │   └── list.ts           # List resources command
 │   │   └── utils/
 │   │       ├── file-tracker.ts   # File tracking system
 │   │       ├── template-engine.ts # Variable substitution
@@ -271,7 +334,9 @@ jd-kit/
 │   │   ├── tsconfig.base.json
 │   │   ├── tsconfig.backend.json
 │   │   └── tsconfig.frontend.json
-│   └── scripts/                  # Reusable scripts (Phase 3)
+│   └── scripts/                  # Reusable scripts
+│       ├── cq-fix.ts             # Code quality fix script
+│       └── scripts.json          # Scripts manifest
 ├── templates/
 │   └── claude/                   # Claude command templates
 │       ├── implement.md
@@ -296,12 +361,12 @@ jd-kit/
 - ✅ Shareable TypeScript config (Base, Backend, Frontend)
 - ✅ `jd-kit sync --configs` command
 
-### Phase 3: Script Management (Next)
-- [ ] Extract reusable scripts
-- [ ] `jd-kit run <script>` command
-- [ ] `jd-kit list` command
+### Phase 3: Script Management ✅
+- ✅ Extract reusable scripts
+- ✅ `jd-kit run <script>` command
+- ✅ `jd-kit list` command
 
-### Phase 4: Polish
+### Phase 4: Polish (Next)
 - [ ] `jd-kit init` for new projects
 - [ ] Update notifications
 - [ ] Example projects
