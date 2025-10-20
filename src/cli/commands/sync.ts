@@ -172,6 +172,80 @@ async function syncClaudeCommands(update: boolean = false): Promise<void> {
   console.log(chalk.blue(`✓ Created .claude/.toolkit-meta.json`))
 }
 
+async function syncConfigs(): Promise<void> {
+  console.log(chalk.blue('\nConfiguration File Selection'))
+  console.log('Select which config files to sync:\n')
+
+  const { configs } = await inquirer.prompt([
+    {
+      type: 'checkbox',
+      name: 'configs',
+      message: 'Select configuration files:',
+      choices: [
+        { name: 'ESLint (eslint.config.js)', value: 'eslint', checked: true },
+        { name: 'Prettier (.prettierrc)', value: 'prettier', checked: true },
+        { name: 'TypeScript - Base (tsconfig.base.json)', value: 'tsconfig-base', checked: true },
+        { name: 'TypeScript - Backend (tsconfig.backend.json)', value: 'tsconfig-backend' },
+        { name: 'TypeScript - Frontend (tsconfig.frontend.json)', value: 'tsconfig-frontend' }
+      ]
+    }
+  ])
+
+  if (configs.length === 0) {
+    console.log(chalk.yellow('No configs selected'))
+    return
+  }
+
+  const configMap: Record<string, { source: string; dest: string; instructions: string }> = {
+    'eslint': {
+      source: path.resolve(__dirname, '../../../src/configs/eslint.config.js'),
+      dest: 'eslint.config.js',
+      instructions: 'Extend this config in your eslint.config.js:\n  import jdKitConfig from "@jdansercoer/jd-kit/configs/eslint"\n  export default [...jdKitConfig, /* your overrides */]'
+    },
+    'prettier': {
+      source: path.resolve(__dirname, '../../../src/configs/prettier.config.js'),
+      dest: '.prettierrc',
+      instructions: 'Extend this config in your prettier.config.js:\n  import jdKitConfig from "@jdansercoer/jd-kit/configs/prettier"\n  export default { ...jdKitConfig, /* your overrides */ }'
+    },
+    'tsconfig-base': {
+      source: path.resolve(__dirname, '../../../src/configs/tsconfig.base.json'),
+      dest: 'tsconfig.base.json',
+      instructions: 'Extend this config in your tsconfig.json:\n  { "extends": "@jdansercoer/jd-kit/configs/tsconfig.base.json" }'
+    },
+    'tsconfig-backend': {
+      source: path.resolve(__dirname, '../../../src/configs/tsconfig.backend.json'),
+      dest: 'tsconfig.backend.json',
+      instructions: 'Extend this config in your backend tsconfig.json:\n  { "extends": "@jdansercoer/jd-kit/configs/tsconfig.backend.json" }'
+    },
+    'tsconfig-frontend': {
+      source: path.resolve(__dirname, '../../../src/configs/tsconfig.frontend.json'),
+      dest: 'tsconfig.frontend.json',
+      instructions: 'Extend this config in your frontend tsconfig.json:\n  { "extends": "@jdansercoer/jd-kit/configs/tsconfig.frontend.json" }'
+    }
+  }
+
+  console.log()
+  for (const configKey of configs) {
+    const config = configMap[configKey]
+    if (!config) continue
+
+    const exists = await fs.pathExists(config.dest)
+    if (exists) {
+      console.log(chalk.yellow(`⚠️  ${config.dest} already exists - skipping`))
+      console.log(chalk.gray(`   ${config.instructions}`))
+      continue
+    }
+
+    await fs.copy(config.source, config.dest)
+    console.log(chalk.green(`✓ Created ${config.dest}`))
+    console.log(chalk.gray(`  ${config.instructions}`))
+  }
+
+  console.log()
+  console.log(chalk.green('✓ Config sync complete!'))
+  console.log(chalk.blue('💡 Tip: You can also import these configs directly without copying'))
+}
+
 export async function syncCommand(options: SyncOptions): Promise<void> {
   console.log(chalk.bold('\n🛠️  JD-Kit Sync\n'))
 
@@ -188,6 +262,6 @@ export async function syncCommand(options: SyncOptions): Promise<void> {
   }
 
   if (options.configs) {
-    console.log(chalk.yellow('\nConfig syncing not yet implemented (coming in Phase 2)'))
+    await syncConfigs()
   }
 }

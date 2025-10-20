@@ -13,7 +13,8 @@
     "./configs/eslint": "./dist/configs/eslint.config.js",
     "./configs/prettier": "./dist/configs/prettier.config.js",
     "./configs/tsconfig.base.json": "./src/configs/tsconfig.base.json",
-    "./configs/playwright": "./dist/configs/playwright.config.js"
+    "./configs/tsconfig.backend.json": "./src/configs/tsconfig.backend.json",
+    "./configs/tsconfig.frontend.json": "./src/configs/tsconfig.frontend.json"
   },
   "files": [
     "dist",
@@ -37,5 +38,33 @@
     "@types/inquirer": "^9.0.9",
     "@types/node": "^24.8.1",
     "typescript": "^5.9.3"
+  },
+  "peerDependencies": {
+    "@eslint/js": "^9.0.0",
+    "eslint": "^9.0.0",
+    "eslint-plugin-perfectionist": "^4.0.0",
+    "globals": "^15.0.0",
+    "prettier": "^3.0.0",
+    "typescript-eslint": "^8.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@eslint/js": {
+      "optional": true
+    },
+    "eslint": {
+      "optional": true
+    },
+    "eslint-plugin-perfectionist": {
+      "optional": true
+    },
+    "globals": {
+      "optional": true
+    },
+    "prettier": {
+      "optional": true
+    },
+    "typescript-eslint": {
+      "optional": true
+    }
   }
 }

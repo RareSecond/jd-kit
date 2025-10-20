@@ -82,6 +82,8 @@ Templates use `{{VARIABLE}}` syntax for project-specific values:
 - `{{MONOREPO_ROOT}}` - Root path of the monorepo (default: `.`)
 - `{{BACKEND_PATH}}` - Path to backend application (default: `backend`)
 - `{{FRONTEND_PATH}}` - Path to frontend application (default: `frontend`)
+- `{{BACKEND_URL}}` - Backend development URL (default: `http://localhost:3000/api`)
+- `{{FRONTEND_URL}}` - Frontend development URL (default: `http://localhost:5173`)
 - `{{SCRIPTS_PATH}}` - Path to shared scripts (default: `.claude/lib`)
 
 ### How It Works
@@ -120,9 +122,23 @@ This allows the toolkit to:
 - Detect local modifications
 - Preserve your variable configuration
 
-## Shareable Configs (Coming in Phase 2)
+## Shareable Configs
 
-Extend the toolkit's base configurations in your project:
+The toolkit provides shareable configuration files for ESLint, Prettier, and TypeScript. You can either **copy** them to your project or **import** them directly.
+
+### Syncing Config Files
+
+Copy config files to your project:
+
+```bash
+npx jd-kit sync --configs
+```
+
+This will prompt you to select which configs to copy. The toolkit will check if files already exist and skip them to avoid overwriting your custom configurations.
+
+### Importing Configs
+
+Alternatively, import configs directly without copying:
 
 ### ESLint
 
@@ -155,6 +171,9 @@ export default {
 
 ### TypeScript
 
+The toolkit provides three TypeScript configurations:
+
+**Base Config** - Flexible base configuration:
 ```json
 {
   "extends": "@jdansercoer/jd-kit/configs/tsconfig.base.json",
@@ -163,6 +182,43 @@ export default {
   }
 }
 ```
+
+**Backend Config** - NestJS/Node.js optimized (CommonJS, decorators, relaxed strictness):
+```json
+{
+  "extends": "@jdansercoer/jd-kit/configs/tsconfig.backend.json",
+  "compilerOptions": {
+    // Additional backend settings
+  }
+}
+```
+
+**Frontend Config** - React/Vite optimized (ESNext, strict mode, JSX):
+```json
+{
+  "extends": "@jdansercoer/jd-kit/configs/tsconfig.frontend.json",
+  "compilerOptions": {
+    // Additional frontend settings
+  }
+}
+```
+
+### What's Included
+
+**ESLint Config:**
+- TypeScript ESLint rules
+- Perfectionist plugin for sorting
+- Test file configurations
+- Recommended code quality rules
+
+**Prettier Config:**
+- Consistent quote props
+- Object wrapping preferences
+
+**TypeScript Configs:**
+- Modern ES targets
+- Path aliases support
+- Appropriate strictness levels for backend/frontend
 
 ## Development
 
@@ -209,7 +265,12 @@ jd-kit/
 │   │       ├── file-tracker.ts   # File tracking system
 │   │       ├── template-engine.ts # Variable substitution
 │   │       └── hash.ts           # File hashing
-│   ├── configs/                  # Shareable configs (Phase 2)
+│   ├── configs/                  # Shareable configs
+│   │   ├── eslint.config.js
+│   │   ├── prettier.config.js
+│   │   ├── tsconfig.base.json
+│   │   ├── tsconfig.backend.json
+│   │   └── tsconfig.frontend.json
 │   └── scripts/                  # Reusable scripts (Phase 3)
 ├── templates/
 │   └── claude/                   # Claude command templates
@@ -229,13 +290,13 @@ jd-kit/
 - ✅ File tracking system
 - ✅ Template variable substitution
 
-### Phase 2: Config Extraction (Next)
-- [ ] Shareable ESLint config
-- [ ] Shareable Prettier config
-- [ ] Shareable TypeScript config
-- [ ] `jd-kit sync --configs` command
+### Phase 2: Config Extraction ✅
+- ✅ Shareable ESLint config
+- ✅ Shareable Prettier config
+- ✅ Shareable TypeScript config (Base, Backend, Frontend)
+- ✅ `jd-kit sync --configs` command
 
-### Phase 3: Script Management
+### Phase 3: Script Management (Next)
 - [ ] Extract reusable scripts
 - [ ] `jd-kit run <script>` command
 - [ ] `jd-kit list` command
