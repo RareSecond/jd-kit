@@ -19,12 +19,12 @@
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jdansercoer/jd-kit.git"
+    "url": "git+https://github.com/RareSecond/jd-kit.git"
   },
   "bugs": {
-    "url": "https://github.com/jdansercoer/jd-kit/issues"
+    "url": "https://github.com/RareSecond/jd-kit/issues"
   },
-  "homepage": "https://github.com/jdansercoer/jd-kit#readme",
+  "homepage": "https://github.com/RareSecond/jd-kit#readme",
   "bin": {
     "jd-kit": "./dist/cli/index.js"
   },
