@@ -185,7 +185,9 @@ async function syncConfigs(): Promise<void> {
         { name: 'ESLint Root (eslint.config.js)', value: 'eslint', checked: true },
         { name: 'Prettier (.prettierrc)', value: 'prettier', checked: true },
         { name: 'ESLint Backend Example (backend/eslint.config.js)', value: 'eslint-backend' },
-        { name: 'ESLint Frontend Example (frontend/eslint.config.mjs)', value: 'eslint-frontend' }
+        { name: 'ESLint Frontend Example (frontend/eslint.config.mjs)', value: 'eslint-frontend' },
+        { name: 'TypeScript Backend (backend/tsconfig.json + tsconfig.build.json)', value: 'ts-backend' },
+        { name: 'TypeScript Frontend (frontend/tsconfig.*.json)', value: 'ts-frontend' }
       ]
     }
   ])
@@ -220,6 +222,49 @@ async function syncConfigs(): Promise<void> {
 
   console.log()
   for (const configKey of configs) {
+    // Handle TypeScript backend (multiple files)
+    if (configKey === 'ts-backend') {
+      const files = [
+        { source: 'backend.tsconfig.json', dest: 'backend/tsconfig.json' },
+        { source: 'backend.tsconfig.build.json', dest: 'backend/tsconfig.build.json' }
+      ]
+
+      for (const file of files) {
+        const sourcePath = path.resolve(__dirname, '../../../templates/configs', file.source)
+        const exists = await fs.pathExists(file.dest)
+        if (exists) {
+          console.log(chalk.yellow(`⚠️  ${file.dest} already exists - skipping`))
+        } else {
+          await fs.copy(sourcePath, file.dest)
+          console.log(chalk.green(`✓ Created ${file.dest}`))
+        }
+      }
+      console.log(chalk.gray('  Backend TypeScript config copied (NestJS/CommonJS setup).'))
+      continue
+    }
+
+    // Handle TypeScript frontend (multiple files)
+    if (configKey === 'ts-frontend') {
+      const files = [
+        { source: 'frontend.tsconfig.json', dest: 'frontend/tsconfig.json' },
+        { source: 'frontend.tsconfig.app.json', dest: 'frontend/tsconfig.app.json' },
+        { source: 'frontend.tsconfig.node.json', dest: 'frontend/tsconfig.node.json' }
+      ]
+
+      for (const file of files) {
+        const sourcePath = path.resolve(__dirname, '../../../templates/configs', file.source)
+        const exists = await fs.pathExists(file.dest)
+        if (exists) {
+          console.log(chalk.yellow(`⚠️  ${file.dest} already exists - skipping`))
+        } else {
+          await fs.copy(sourcePath, file.dest)
+          console.log(chalk.green(`✓ Created ${file.dest}`))
+        }
+      }
+      console.log(chalk.gray('  Frontend TypeScript config copied (Vite/React setup).'))
+      continue
+    }
+
     const config = configMap[configKey]
     if (!config) continue
 

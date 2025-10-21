@@ -86,7 +86,9 @@ export async function listCommand(options: ListOptions): Promise<void> {
       { name: 'ESLint Root', path: '@jdansercoer/jd-kit/configs/eslint', description: 'Root ESLint config with TypeScript + Perfectionist' },
       { name: 'Prettier', path: '@jdansercoer/jd-kit/configs/.prettierrc', description: 'Code formatting preferences (.prettierrc)' },
       { name: 'ESLint Backend Example', path: 'templates/configs', description: 'Example backend ESLint config (extends root)' },
-      { name: 'ESLint Frontend Example', path: 'templates/configs', description: 'Example frontend ESLint config (React, extends root)' }
+      { name: 'ESLint Frontend Example', path: 'templates/configs', description: 'Example frontend ESLint config (React, extends root)' },
+      { name: 'TypeScript Backend', path: 'templates/configs', description: 'Backend tsconfig.json + tsconfig.build.json (NestJS/CommonJS)' },
+      { name: 'TypeScript Frontend', path: 'templates/configs', description: 'Frontend tsconfig.*.json (Vite/React with project references)' }
     ]
 
     configs.forEach(config => {

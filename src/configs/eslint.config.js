@@ -18,10 +18,11 @@ export default [
       "coverage/**",
       "**/*.gen.ts",
       "**/*.generated.ts",
-      "**/routeTree.gen.ts",
+      "**/src/routeTree.gen.ts",
       "**/playwright-report/**",
       "**/test-results/**",
       "e2e/.auth/**",
+      "**/src/data/**",
       "**/prisma/migrations/**",
     ],
   },
@@ -38,6 +39,7 @@ export default [
       "@typescript-eslint/explicit-module-boundary-types": "off",
       "@typescript-eslint/no-explicit-any": "error",
       "@typescript-eslint/no-inferrable-types": "error",
+      // General TypeScript rules
       "@typescript-eslint/no-unused-vars": [
         "error",
         { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
