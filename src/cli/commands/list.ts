@@ -83,11 +83,10 @@ export async function listCommand(options: ListOptions): Promise<void> {
     console.log(chalk.bold.blue('Shareable Configurations:\n'))
 
     const configs = [
-      { name: 'ESLint', path: '@jdansercoer/jd-kit/configs/eslint', description: 'TypeScript + Perfectionist rules' },
-      { name: 'Prettier', path: '@jdansercoer/jd-kit/configs/prettier', description: 'Code formatting preferences' },
-      { name: 'TypeScript (Base)', path: '@jdansercoer/jd-kit/configs/tsconfig.base.json', description: 'Flexible base configuration' },
-      { name: 'TypeScript (Backend)', path: '@jdansercoer/jd-kit/configs/tsconfig.backend.json', description: 'NestJS/Node.js optimized' },
-      { name: 'TypeScript (Frontend)', path: '@jdansercoer/jd-kit/configs/tsconfig.frontend.json', description: 'React/Vite optimized' }
+      { name: 'ESLint Root', path: '@jdansercoer/jd-kit/configs/eslint', description: 'Root ESLint config with TypeScript + Perfectionist' },
+      { name: 'Prettier', path: '@jdansercoer/jd-kit/configs/.prettierrc', description: 'Code formatting preferences (.prettierrc)' },
+      { name: 'ESLint Backend Example', path: 'templates/configs', description: 'Example backend ESLint config (extends root)' },
+      { name: 'ESLint Frontend Example', path: 'templates/configs', description: 'Example frontend ESLint config (React, extends root)' }
     ]
 
     configs.forEach(config => {

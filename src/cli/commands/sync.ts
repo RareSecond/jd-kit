@@ -182,11 +182,10 @@ async function syncConfigs(): Promise<void> {
       name: 'configs',
       message: 'Select configuration files:',
       choices: [
-        { name: 'ESLint (eslint.config.js)', value: 'eslint', checked: true },
+        { name: 'ESLint Root (eslint.config.js)', value: 'eslint', checked: true },
         { name: 'Prettier (.prettierrc)', value: 'prettier', checked: true },
-        { name: 'TypeScript - Base (tsconfig.base.json)', value: 'tsconfig-base', checked: true },
-        { name: 'TypeScript - Backend (tsconfig.backend.json)', value: 'tsconfig-backend' },
-        { name: 'TypeScript - Frontend (tsconfig.frontend.json)', value: 'tsconfig-frontend' }
+        { name: 'ESLint Backend Example (backend/eslint.config.js)', value: 'eslint-backend' },
+        { name: 'ESLint Frontend Example (frontend/eslint.config.mjs)', value: 'eslint-frontend' }
       ]
     }
   ])
@@ -200,27 +199,22 @@ async function syncConfigs(): Promise<void> {
     'eslint': {
       source: path.resolve(__dirname, '../../../src/configs/eslint.config.js'),
       dest: 'eslint.config.js',
-      instructions: 'Extend this config in your eslint.config.js:\n  import jdKitConfig from "@jdansercoer/jd-kit/configs/eslint"\n  export default [...jdKitConfig, /* your overrides */]'
+      instructions: 'Root ESLint config copied. Extend this in your backend/frontend workspaces.'
     },
     'prettier': {
-      source: path.resolve(__dirname, '../../../src/configs/prettier.config.js'),
+      source: path.resolve(__dirname, '../../../src/configs/.prettierrc'),
       dest: '.prettierrc',
-      instructions: 'Extend this config in your prettier.config.js:\n  import jdKitConfig from "@jdansercoer/jd-kit/configs/prettier"\n  export default { ...jdKitConfig, /* your overrides */ }'
+      instructions: 'Prettier config copied to root.'
     },
-    'tsconfig-base': {
-      source: path.resolve(__dirname, '../../../src/configs/tsconfig.base.json'),
-      dest: 'tsconfig.base.json',
-      instructions: 'Extend this config in your tsconfig.json:\n  { "extends": "@jdansercoer/jd-kit/configs/tsconfig.base.json" }'
+    'eslint-backend': {
+      source: path.resolve(__dirname, '../../../templates/configs/backend.eslint.config.js'),
+      dest: 'backend/eslint.config.js',
+      instructions: 'Backend ESLint example copied. Adjust the import path to point to your root config.'
     },
-    'tsconfig-backend': {
-      source: path.resolve(__dirname, '../../../src/configs/tsconfig.backend.json'),
-      dest: 'tsconfig.backend.json',
-      instructions: 'Extend this config in your backend tsconfig.json:\n  { "extends": "@jdansercoer/jd-kit/configs/tsconfig.backend.json" }'
-    },
-    'tsconfig-frontend': {
-      source: path.resolve(__dirname, '../../../src/configs/tsconfig.frontend.json'),
-      dest: 'tsconfig.frontend.json',
-      instructions: 'Extend this config in your frontend tsconfig.json:\n  { "extends": "@jdansercoer/jd-kit/configs/tsconfig.frontend.json" }'
+    'eslint-frontend': {
+      source: path.resolve(__dirname, '../../../templates/configs/frontend.eslint.config.mjs'),
+      dest: 'frontend/eslint.config.mjs',
+      instructions: 'Frontend ESLint example copied. Adjust the import path to point to your root config.'
     }
   }
 

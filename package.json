@@ -31,10 +31,7 @@
   "exports": {
     ".": "./dist/cli/index.js",
     "./configs/eslint": "./dist/configs/eslint.config.js",
-    "./configs/prettier": "./dist/configs/prettier.config.js",
-    "./configs/tsconfig.base.json": "./src/configs/tsconfig.base.json",
-    "./configs/tsconfig.backend.json": "./src/configs/tsconfig.backend.json",
-    "./configs/tsconfig.frontend.json": "./src/configs/tsconfig.frontend.json"
+    "./configs/.prettierrc": "./src/configs/.prettierrc"
   },
   "files": [
     "dist",
