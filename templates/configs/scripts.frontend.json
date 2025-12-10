@@ -4,8 +4,8 @@
     "typecheck": "tsc -b",
     "lint": "eslint . --fix",
     "lint:check": "eslint . --max-warnings 0",
-    "prettier": "prettier --write .",
-    "prettier:check": "prettier --check .",
+    "prettier": "prettier --write \"src/**/*.{ts,tsx}\"",
+    "prettier:check": "prettier --check \"src/**/*.{ts,tsx}\"",
     "cq:local": "npm run prettier && npm run lint && npm run typecheck"
   }
 }
