@@ -1,7 +1,7 @@
 {
   "description": "Frontend npm scripts for quality checks (Vite/React)",
   "scripts": {
-    "typecheck": "tsc -b",
+    "typecheck": "tsc --project tsconfig.app.json --noEmit",
     "lint": "eslint . --fix",
     "lint:check": "eslint . --max-warnings 0",
     "prettier": "prettier --write \"src/**/*.{ts,tsx}\"",
