@@ -14,6 +14,7 @@ interface SyncOptions {
   configs?: boolean
   hooks?: boolean
   npmScripts?: boolean
+  workflows?: boolean
   update?: boolean
 }
 
@@ -514,15 +515,75 @@ async function syncNpmScripts(): Promise<void> {
   }
 }
 
+async function syncWorkflows(): Promise<void> {
+  console.log(chalk.blue('\nGitHub Workflow Selection'))
+  console.log('Select which workflow to add:\n')
+
+  const { workflow } = await inquirer.prompt([
+    {
+      type: 'list',
+      name: 'workflow',
+      message: 'Select workflow template:',
+      choices: [
+        { name: 'Code Quality (Basic) - typecheck, lint, prettier', value: 'code-quality' },
+        { name: 'Code Quality (Full) - includes Prisma, PostgreSQL, Orval', value: 'code-quality-full' }
+      ]
+    }
+  ])
+
+  // Ensure .github/workflows directory exists
+  await fs.ensureDir('.github/workflows')
+
+  const templatePath = path.resolve(__dirname, `../../../templates/github/workflows/${workflow}.yml`)
+  const outputPath = '.github/workflows/code-quality.yml'
+
+  const exists = await fs.pathExists(outputPath)
+  if (exists) {
+    const { overwrite } = await inquirer.prompt([
+      {
+        type: 'confirm',
+        name: 'overwrite',
+        message: chalk.yellow(`${outputPath} already exists. Overwrite?`),
+        default: false
+      }
+    ])
+
+    if (!overwrite) {
+      console.log(chalk.gray('Skipped workflow sync'))
+      return
+    }
+  }
+
+  await fs.copy(templatePath, outputPath)
+
+  console.log(chalk.green(`\n✓ Created ${outputPath}`))
+
+  if (workflow === 'code-quality') {
+    console.log(chalk.blue('\n📋 Basic workflow includes:'))
+    console.log(chalk.gray('  • Checkout, Node.js setup, npm ci'))
+    console.log(chalk.gray('  • npm run cq (typecheck, lint, prettier)'))
+    console.log(chalk.yellow('\n💡 Uncomment Prisma/Orval sections if needed'))
+  } else {
+    console.log(chalk.blue('\n📋 Full workflow includes:'))
+    console.log(chalk.gray('  • Checkout, Node.js setup, npm ci'))
+    console.log(chalk.gray('  • Prisma generate + PostgreSQL setup'))
+    console.log(chalk.gray('  • Schema drift detection'))
+    console.log(chalk.gray('  • Orval API client generation'))
+    console.log(chalk.gray('  • npm run cq'))
+    console.log(chalk.yellow('\n⚠️  You may need to add TimescaleDB setup if using it'))
+  }
+}
+
 export async function syncCommand(options: SyncOptions): Promise<void> {
   console.log(chalk.bold('\n🛠️  JD-Kit Sync\n'))
 
-  if (!options.claude && !options.configs && !options.hooks && !options.npmScripts) {
+  if (!options.claude && !options.configs && !options.hooks && !options.npmScripts && !options.workflows) {
     console.log(chalk.yellow('Please specify what to sync:'))
     console.log('  --claude       Sync Claude commands')
     console.log('  --configs      Sync configuration files')
     console.log('  --hooks        Sync Claude hooks (quality gate, auto-format)')
     console.log('  --npm-scripts  Add quality check scripts to package.json')
+    console.log('  --workflows    Add GitHub workflow templates')
     console.log('\nExample: jd-kit sync --claude')
     return
   }
@@ -541,5 +602,9 @@ export async function syncCommand(options: SyncOptions): Promise<void> {
 
   if (options.npmScripts) {
     await syncNpmScripts()
+  }
+
+  if (options.workflows) {
+    await syncWorkflows()
   }
 }

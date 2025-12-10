@@ -36,12 +36,13 @@ interface ListOptions {
   commands?: boolean
   hooks?: boolean
   npmScripts?: boolean
+  workflows?: boolean
 }
 
 export async function listCommand(options: ListOptions): Promise<void> {
   console.log(chalk.bold('\n📋 JD-Kit Resources\n'))
 
-  const showAll = !options.scripts && !options.configs && !options.commands && !options.hooks && !options.npmScripts
+  const showAll = !options.scripts && !options.configs && !options.commands && !options.hooks && !options.npmScripts && !options.workflows
 
   // List Scripts
   if (options.scripts || showAll) {
@@ -179,5 +180,32 @@ export async function listCommand(options: ListOptions): Promise<void> {
     })
 
     console.log(chalk.gray('  Usage: jd-kit sync --npm-scripts\n'))
+  }
+
+  // List Workflows
+  if (options.workflows || showAll) {
+    console.log(chalk.bold.blue('GitHub Workflow Templates:\n'))
+
+    const workflows = [
+      {
+        name: 'Code Quality (Basic)',
+        description: 'Runs typecheck, lint, prettier on PRs',
+        file: 'code-quality.yml'
+      },
+      {
+        name: 'Code Quality (Full)',
+        description: 'Includes Prisma, PostgreSQL, schema drift check, Orval',
+        file: 'code-quality-full.yml'
+      }
+    ]
+
+    workflows.forEach(workflow => {
+      console.log(`  ${chalk.green(workflow.name)}`)
+      console.log(`  ${chalk.gray(workflow.description)}`)
+      console.log(`  ${chalk.cyan('File:')} ${workflow.file}`)
+      console.log()
+    })
+
+    console.log(chalk.gray('  Usage: jd-kit sync --workflows\n'))
   }
 }

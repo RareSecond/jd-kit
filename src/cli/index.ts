@@ -29,6 +29,7 @@ program
   .option('--configs', 'Sync configuration files')
   .option('--hooks', 'Sync Claude hooks (quality gate, auto-format)')
   .option('--npm-scripts', 'Add quality check scripts to package.json')
+  .option('--workflows', 'Add GitHub workflow templates')
   .option('--update', 'Update existing synced files')
   .action(syncCommand)
 
@@ -45,6 +46,7 @@ program
   .option('--commands', 'List only Claude commands')
   .option('--hooks', 'List only Claude hooks')
   .option('--npm-scripts', 'List only npm scripts templates')
+  .option('--workflows', 'List only GitHub workflow templates')
   .action(listCommand)
 
 program.parse()
