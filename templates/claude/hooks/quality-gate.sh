@@ -43,12 +43,13 @@ append_failure() {
 # Initialize
 change_dir "$CLAUDE_PROJECT_DIR" "project directory" || exit 1
 
-# Check if there are any unstaged or staged changes to TS/JS files
+# Check if there are any unstaged, staged, or untracked TS/JS files
 UNSTAGED_FILES=$(git diff --name-only 2>/dev/null | grep -E "$TS_JS_FILE_PATTERN" || true)
 STAGED_FILES=$(git diff --cached --name-only 2>/dev/null | grep -E "$TS_JS_FILE_PATTERN" || true)
+UNTRACKED_FILES=$(git ls-files --others --exclude-standard 2>/dev/null | grep -E "$TS_JS_FILE_PATTERN" || true)
 
 # Silent exit if no code changes
-if [[ -z "$UNSTAGED_FILES" && -z "$STAGED_FILES" ]]; then
+if [[ -z "$UNSTAGED_FILES" && -z "$STAGED_FILES" && -z "$UNTRACKED_FILES" ]]; then
     exit 0
 fi
 
