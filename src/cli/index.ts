@@ -27,6 +27,8 @@ program
   .description('Sync toolkit resources to project')
   .option('--claude', 'Sync Claude commands')
   .option('--configs', 'Sync configuration files')
+  .option('--hooks', 'Sync Claude hooks (quality gate, auto-format)')
+  .option('--npm-scripts', 'Add quality check scripts to package.json')
   .option('--update', 'Update existing synced files')
   .action(syncCommand)
 
@@ -41,6 +43,8 @@ program
   .option('--scripts', 'List only scripts')
   .option('--configs', 'List only configurations')
   .option('--commands', 'List only Claude commands')
+  .option('--hooks', 'List only Claude hooks')
+  .option('--npm-scripts', 'List only npm scripts templates')
   .action(listCommand)
 
 program.parse()

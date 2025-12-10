@@ -1,0 +1,11 @@
+{
+  "description": "Frontend npm scripts for quality checks (Vite/React)",
+  "scripts": {
+    "typecheck": "tsc -b",
+    "lint": "eslint . --fix",
+    "lint:check": "eslint . --max-warnings 0",
+    "prettier": "prettier --write .",
+    "prettier:check": "prettier --check .",
+    "cq:local": "npm run prettier && npm run lint && npm run typecheck"
+  }
+}

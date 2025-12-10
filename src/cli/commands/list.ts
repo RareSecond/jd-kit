@@ -34,12 +34,14 @@ interface ListOptions {
   scripts?: boolean
   configs?: boolean
   commands?: boolean
+  hooks?: boolean
+  npmScripts?: boolean
 }
 
 export async function listCommand(options: ListOptions): Promise<void> {
   console.log(chalk.bold('\n📋 JD-Kit Resources\n'))
 
-  const showAll = !options.scripts && !options.configs && !options.commands
+  const showAll = !options.scripts && !options.configs && !options.commands && !options.hooks && !options.npmScripts
 
   // List Scripts
   if (options.scripts || showAll) {
@@ -118,5 +120,64 @@ export async function listCommand(options: ListOptions): Promise<void> {
     })
 
     console.log(chalk.gray('  Usage: jd-kit sync --claude\n'))
+  }
+
+  // List Hooks
+  if (options.hooks || showAll) {
+    console.log(chalk.bold.blue('Claude Hooks:\n'))
+
+    const hooks = [
+      {
+        name: 'instant-quality.sh',
+        description: 'Auto-formats files with Prettier and ESLint after Edit/Write operations',
+        trigger: 'PostToolUse (Edit|Write)'
+      },
+      {
+        name: 'quality-gate.sh',
+        description: 'Runs typecheck, lint, and format checks before Claude finishes',
+        trigger: 'Stop, SubagentStop'
+      }
+    ]
+
+    hooks.forEach(hook => {
+      console.log(`  ${chalk.green(hook.name)}`)
+      console.log(`  ${chalk.gray(hook.description)}`)
+      console.log(`  ${chalk.cyan('Trigger:')} ${hook.trigger}`)
+      console.log()
+    })
+
+    console.log(chalk.gray('  Usage: jd-kit sync --hooks\n'))
+  }
+
+  // List Npm Scripts
+  if (options.npmScripts || showAll) {
+    console.log(chalk.bold.blue('Npm Scripts Templates:\n'))
+
+    const scriptTemplates = [
+      {
+        name: 'Backend Scripts',
+        description: 'Quality check scripts for NestJS/Node.js projects',
+        scripts: ['typecheck', 'lint', 'lint:check', 'prettier', 'prettier:check', 'cq:local']
+      },
+      {
+        name: 'Frontend Scripts',
+        description: 'Quality check scripts for Vite/React projects',
+        scripts: ['typecheck', 'lint', 'lint:check', 'prettier', 'prettier:check', 'cq:local']
+      },
+      {
+        name: 'Monorepo Scripts',
+        description: 'Quality check scripts for monorepo root (runs across workspaces)',
+        scripts: ['typecheck', 'lint', 'lint:check', 'prettier', 'prettier:check', 'cq:local']
+      }
+    ]
+
+    scriptTemplates.forEach(template => {
+      console.log(`  ${chalk.green(template.name)}`)
+      console.log(`  ${chalk.gray(template.description)}`)
+      console.log(`  ${chalk.cyan('Scripts:')} ${template.scripts.join(', ')}`)
+      console.log()
+    })
+
+    console.log(chalk.gray('  Usage: jd-kit sync --npm-scripts\n'))
   }
 }

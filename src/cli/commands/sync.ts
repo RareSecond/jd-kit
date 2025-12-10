@@ -12,6 +12,8 @@ const __dirname = path.dirname(__filename)
 interface SyncOptions {
   claude?: boolean
   configs?: boolean
+  hooks?: boolean
+  npmScripts?: boolean
   update?: boolean
 }
 
@@ -285,13 +287,242 @@ async function syncConfigs(): Promise<void> {
   console.log(chalk.blue('💡 Tip: You can also import these configs directly without copying'))
 }
 
+async function syncHooks(update: boolean = false): Promise<void> {
+  console.log(chalk.blue('\nSyncing Claude Hooks...\n'))
+
+  const tracker = new FileTracker()
+  const templateDir = path.resolve(__dirname, '../../../templates/claude/hooks')
+
+  // Check if template directory exists
+  const templateDirExists = await fs.pathExists(templateDir)
+  if (!templateDirExists) {
+    console.log(chalk.yellow(`\nHooks template directory not found: ${templateDir}`))
+    return
+  }
+
+  // Ensure .claude/hooks directory exists
+  await fs.ensureDir('.claude/hooks')
+
+  // Sync hook scripts
+  const hookFiles = await fs.readdir(templateDir)
+  const shellScripts = hookFiles.filter(f => f.endsWith('.sh'))
+
+  let syncedCount = 0
+  let skippedCount = 0
+
+  for (const script of shellScripts) {
+    const outputPath = `.claude/hooks/${script}`
+    const exists = await fs.pathExists(outputPath)
+
+    if (exists && !update) {
+      console.log(chalk.gray(`⏭️  Skipped ${script} (already exists)`))
+      skippedCount++
+      continue
+    }
+
+    if (exists && update) {
+      const modified = await tracker.isModified(outputPath)
+      if (modified) {
+        const choice = await promptOverwrite(script)
+        if (choice === 'skip') {
+          console.log(chalk.gray(`⏭️  Skipped ${script} (keeping local version)`))
+          skippedCount++
+          continue
+        }
+        if (choice === 'backup') {
+          await fs.copy(outputPath, `${outputPath}.backup`)
+          console.log(chalk.blue(`📦 Backed up to ${script}.backup`))
+        }
+      }
+    }
+
+    // Copy the hook script
+    const sourcePath = path.join(templateDir, script)
+    await fs.copy(sourcePath, outputPath)
+
+    // Make it executable
+    await fs.chmod(outputPath, '755')
+
+    // Track the file
+    const content = await fs.readFile(outputPath, 'utf-8')
+    await tracker.track(outputPath, content)
+
+    console.log(chalk.green(`✓ Synced ${script}`))
+    syncedCount++
+  }
+
+  // Sync settings.json (merge hooks into existing settings)
+  const settingsTemplatePath = path.resolve(__dirname, '../../../templates/claude/settings.json')
+  const settingsOutputPath = '.claude/settings.json'
+
+  if (await fs.pathExists(settingsTemplatePath)) {
+    const templateSettings = await fs.readJSON(settingsTemplatePath)
+    let existingSettings: Record<string, unknown> = {}
+
+    if (await fs.pathExists(settingsOutputPath)) {
+      try {
+        existingSettings = await fs.readJSON(settingsOutputPath)
+      } catch {
+        // If parsing fails, start fresh
+        existingSettings = {}
+      }
+    }
+
+    // Merge hooks configuration (template hooks take precedence)
+    const mergedSettings = {
+      ...existingSettings,
+      hooks: templateSettings.hooks
+    }
+
+    await fs.writeJSON(settingsOutputPath, mergedSettings, { spaces: 2 })
+    console.log(chalk.green(`✓ Updated .claude/settings.json with hooks configuration`))
+  }
+
+  console.log()
+  console.log(chalk.green(`✓ Synced ${syncedCount} hook(s)`))
+  if (skippedCount > 0) {
+    console.log(chalk.gray(`  Skipped ${skippedCount} hook(s)`))
+  }
+
+  console.log()
+  console.log(chalk.blue('📋 Hooks configured:'))
+  console.log(chalk.gray('  • PostToolUse (Edit|Write): Auto-format with Prettier/ESLint'))
+  console.log(chalk.gray('  • Stop/SubagentStop: Quality gate (typecheck, lint, format)'))
+  console.log()
+  console.log(chalk.yellow('⚠️  Note: The quality-gate.sh hook expects these npm scripts:'))
+  console.log(chalk.gray('  • npm run typecheck'))
+  console.log(chalk.gray('  • npm run lint:check'))
+  console.log(chalk.gray('  • npm run prettier:check'))
+  console.log(chalk.blue('\n💡 Tip: Run `jd-kit sync --npm-scripts` to add these scripts to your package.json'))
+}
+
+async function syncNpmScripts(): Promise<void> {
+  console.log(chalk.blue('\nNpm Scripts Configuration'))
+  console.log('Select your project type to add quality check scripts:\n')
+
+  const { projectType } = await inquirer.prompt([
+    {
+      type: 'list',
+      name: 'projectType',
+      message: 'Select project type:',
+      choices: [
+        { name: 'Backend (NestJS/Node.js) - uses tsc --noEmit', value: 'backend' },
+        { name: 'Frontend (Vite/React) - uses tsc -b', value: 'frontend' },
+        { name: 'Monorepo Root - runs across workspaces', value: 'monorepo' }
+      ]
+    }
+  ])
+
+  // Load the scripts template
+  const templatePath = path.resolve(__dirname, `../../../templates/configs/scripts.${projectType}.json`)
+  const template = await fs.readJSON(templatePath)
+
+  // Check if package.json exists
+  const packageJsonPath = 'package.json'
+  if (!await fs.pathExists(packageJsonPath)) {
+    console.log(chalk.red('\n❌ No package.json found in current directory'))
+    return
+  }
+
+  // Read existing package.json
+  const packageJson = await fs.readJSON(packageJsonPath)
+  const existingScripts = packageJson.scripts || {}
+
+  // Check for conflicts
+  const newScripts = template.scripts
+  const conflicts: string[] = []
+  const toAdd: Record<string, string> = {}
+
+  for (const [name, command] of Object.entries(newScripts)) {
+    if (existingScripts[name] && existingScripts[name] !== command) {
+      conflicts.push(name)
+    } else if (!existingScripts[name]) {
+      toAdd[name] = command as string
+    }
+  }
+
+  if (Object.keys(toAdd).length === 0 && conflicts.length === 0) {
+    console.log(chalk.green('\n✓ All scripts already exist in package.json'))
+    return
+  }
+
+  // Show what will be added
+  if (Object.keys(toAdd).length > 0) {
+    console.log(chalk.blue('\nScripts to add:'))
+    for (const [name, command] of Object.entries(toAdd)) {
+      console.log(chalk.green(`  + ${name}: "${command}"`))
+    }
+  }
+
+  // Handle conflicts
+  if (conflicts.length > 0) {
+    console.log(chalk.yellow('\nConflicting scripts (already exist with different commands):'))
+    for (const name of conflicts) {
+      console.log(chalk.yellow(`  ⚠ ${name}`))
+      console.log(chalk.gray(`    Current: "${existingScripts[name]}"`))
+      console.log(chalk.gray(`    Template: "${newScripts[name]}"`))
+    }
+
+    const { overwrite } = await inquirer.prompt([
+      {
+        type: 'confirm',
+        name: 'overwrite',
+        message: 'Overwrite conflicting scripts?',
+        default: false
+      }
+    ])
+
+    if (overwrite) {
+      for (const name of conflicts) {
+        toAdd[name] = newScripts[name] as string
+      }
+    }
+  }
+
+  if (Object.keys(toAdd).length === 0) {
+    console.log(chalk.yellow('\nNo scripts to add'))
+    return
+  }
+
+  // Confirm
+  const { confirm } = await inquirer.prompt([
+    {
+      type: 'confirm',
+      name: 'confirm',
+      message: `Add ${Object.keys(toAdd).length} script(s) to package.json?`,
+      default: true
+    }
+  ])
+
+  if (!confirm) {
+    console.log(chalk.yellow('Cancelled'))
+    return
+  }
+
+  // Update package.json
+  packageJson.scripts = {
+    ...existingScripts,
+    ...toAdd
+  }
+
+  await fs.writeJSON(packageJsonPath, packageJson, { spaces: 2 })
+
+  console.log(chalk.green(`\n✓ Added ${Object.keys(toAdd).length} script(s) to package.json`))
+  console.log(chalk.blue('\nAdded scripts:'))
+  for (const name of Object.keys(toAdd)) {
+    console.log(chalk.gray(`  • npm run ${name}`))
+  }
+}
+
 export async function syncCommand(options: SyncOptions): Promise<void> {
   console.log(chalk.bold('\n🛠️  JD-Kit Sync\n'))
 
-  if (!options.claude && !options.configs) {
+  if (!options.claude && !options.configs && !options.hooks && !options.npmScripts) {
     console.log(chalk.yellow('Please specify what to sync:'))
-    console.log('  --claude   Sync Claude commands')
-    console.log('  --configs  Sync configuration files')
+    console.log('  --claude       Sync Claude commands')
+    console.log('  --configs      Sync configuration files')
+    console.log('  --hooks        Sync Claude hooks (quality gate, auto-format)')
+    console.log('  --npm-scripts  Add quality check scripts to package.json')
     console.log('\nExample: jd-kit sync --claude')
     return
   }
@@ -302,5 +533,13 @@ export async function syncCommand(options: SyncOptions): Promise<void> {
 
   if (options.configs) {
     await syncConfigs()
+  }
+
+  if (options.hooks) {
+    await syncHooks(options.update)
+  }
+
+  if (options.npmScripts) {
+    await syncNpmScripts()
   }
 }
