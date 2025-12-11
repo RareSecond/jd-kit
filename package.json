@@ -31,7 +31,8 @@
   "exports": {
     ".": "./dist/cli/index.js",
     "./configs/eslint": "./dist/configs/eslint.config.js",
-    "./configs/.prettierrc": "./src/configs/.prettierrc"
+    "./configs/.prettierrc": "./src/configs/.prettierrc",
+    "./eslint-plugin": "./src/configs/eslint-plugin-jd-kit/index.js"
   },
   "files": [
     "dist",

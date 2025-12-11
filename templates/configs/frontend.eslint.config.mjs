@@ -3,6 +3,7 @@ import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import globals from "globals";
 
+import jdKit from "@jdansercoer/jd-kit/eslint-plugin";
 import rootConfig from "../eslint.config.js";
 
 // List of all Mantine style props to ban
@@ -28,7 +29,8 @@ export default [
     plugins: {
       react,
       "react-hooks": reactHooks,
-      "react-refresh": reactRefresh
+      "react-refresh": reactRefresh,
+      "jd-kit": jdKit,
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
@@ -71,6 +73,10 @@ export default [
           ],
         },
       ],
+
+      // Enforce component co-location with routes
+      // Single-use components should live next to their route, not in shared components/
+      "jd-kit/component-colocation": "error",
     },
   },
 ];
